@@ -317,10 +317,70 @@ ADD_DEPENDENCIES(mockcpp vtbl_related_headers arg_related_headers)
 
 INSTALL(
    TARGETS mockcpp
+   EXPORT mockcppTargets
    ARCHIVE DESTINATION lib)
+
+# # Add include directories
+# target_include_directories(mockcpp PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>   # for headers when building
+#     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>  # for client in install mode
+# )
+# # Install the library and its headers
+# install(TARGETS my_sample_lib
+#         EXPORT mockcppTargets
+#         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+#         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+#         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+
+# Install COPYING and LICENSE files to CMAKE_INSTALL_DATAROOTDIR
+install(FILES ${CMAKE_SOURCE_DIR}/COPYING ${CMAKE_SOURCE_DIR}/LICENSE
+        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
 IF(MSVC)
 INSTALL(
    FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
    DESTINATION lib)
 ENDIF(MSVC)
+
+# Create a version file
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
+    VERSION ${VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
+# Create the config file
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/mockcppConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
+    INSTALL_DESTINATION share/mockcpp
+)
+
+# Install the config files
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
+    DESTINATION share/mockcpp
+)
+
+# Export the targets for debug and release
+install(EXPORT mockcppTargets
+    FILE mockcppTargets.cmake
+    NAMESPACE mockcpp::
+    DESTINATION share/mockcpp
+)
+
+# Create and install the debug and release targets
+install(EXPORT mockcppTargets
+    FILE mockcppTargets-debug.cmake
+    NAMESPACE mockcpp::
+    CONFIGURATIONS Debug
+    DESTINATION share/mockcpp
+)
+
+install(EXPORT mockcppTargets
+    FILE mockcppTargets-release.cmake
+    NAMESPACE mockcpp::
+    CONFIGURATIONS Release
+    DESTINATION share/mockcpp
+)

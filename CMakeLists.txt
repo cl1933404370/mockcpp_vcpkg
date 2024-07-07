@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.21...3.30)
 
 PROJECT(mockcpp)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 
 INCLUDE(ProjectVar.txt)
 
