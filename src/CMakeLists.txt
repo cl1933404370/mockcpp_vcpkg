@@ -349,19 +349,6 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
-# Create the config file
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/mockcppConfig.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
-    INSTALL_DESTINATION share/mockcpp
-)
-
-# Install the config files
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
-    DESTINATION share/mockcpp
-)
 
 # Export the targets for debug and release
 install(EXPORT mockcppTargets
@@ -382,5 +369,20 @@ install(EXPORT mockcppTargets
     FILE mockcppTargets-release.cmake
     NAMESPACE mockcpp::
     CONFIGURATIONS Release
+    DESTINATION share/mockcpp
+)
+
+#Generate the config file in the current binary dir (this ensures it's not placed directly in source)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mockcpp-config.cmake"
+    "include(CMakeFindDependencyMacro)\n"
+    "find_dependency(boost-type-traits CONFIG REQUIRED)\n"
+    "find_dependency(gtest CONFIG REQUIRED)\n"
+    "include(\"\${CMAKE_CURRENT_LIST_DIR}/mockcpp-targets.cmake\")\n"
+)
+
+# Install the config files
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
     DESTINATION share/mockcpp
 )
