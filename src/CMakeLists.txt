@@ -373,7 +373,7 @@ install(EXPORT mockcppTargets
 )
 
 #Generate the config file in the current binary dir (this ensures it's not placed directly in source)
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mockcpp-config.cmake"
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
     "include(CMakeFindDependencyMacro)\n"
     "find_dependency(boost-type-traits CONFIG REQUIRED)\n"
     "find_dependency(gtest CONFIG REQUIRED)\n"
