@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.21...3.30)
-
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 # Use find_package to find Python
 find_package(Python REQUIRED COMPONENTS Interpreter)
 
@@ -174,22 +175,27 @@ SET(MOCKCPP_SRCS
 )
 
 IF(${MOCKCPP_XUNIT} STREQUAL "GTEST" OR ${MOCKCPP_XUNIT} STREQUAL "gtest")
-
-   IF(NOT DEFINED MOCKCPP_XUNIT_HOME)
-      MESSAGE(FATAL_ERROR "Please specify MOCKCPP_XUNIT_HOME as the home path of googletest")
-   ENDIF()
-   FIND_FILE(GTEST_HEADER
-             gtest.h
-             PATHS ${MOCKCPP_XUNIT_HOME}/include/gtest
-             NO_DEFAULT_PATH
-             NO_CMAKE_ENVIRONMENT_PATH
-             NO_CMAKE_PATH
-             NO_SYSTEM_ENVIRONMENT_PATH
-             NO_CMAKE_SYSTEM_PATH)
-   IF(NOT GTEST_HEADER)
-      MESSAGE(FATAL_ERROR "gtest.h not found in ${MOCKCPP_XUNIT_HOME}/include/gtest, please specify MOCKCPP_XUNIT_HOME as the home path of googletest correctly.")
-   ENDIF()
-   INCLUDE_DIRECTORIES(BEFORE ${MOCKCPP_XUNIT_HOME}/include)
+   find_package(GTest CONFIG REQUIRED)
+#     if(NOT GTest_INCLUDE_DIRS)
+#         get_target_property(GTEST_INCLUDE_DIRS GTest::gtest INTERFACE_INCLUDE_DIRECTORIES)
+#     endif()
+#     message("GTest_INCLUDE_DIRS: ${GTest_INCLUDE_DIRS}")
+#    set(MOCKCPP_XUNIT_HOME ${GTest_INCLUDE_DIRS}../../)
+#    IF(NOT DEFINED MOCKCPP_XUNIT_HOME)
+#       MESSAGE(FATAL_ERROR "Please specify MOCKCPP_XUNIT_HOME as the home path of googletest")
+#    ENDIF()
+#    FIND_FILE(GTEST_HEADER
+#              gtest.h
+#              PATHS ${MOCKCPP_XUNIT_HOME}/include/gtest
+#              NO_DEFAULT_PATH
+#              NO_CMAKE_ENVIRONMENT_PATH
+#              NO_CMAKE_PATH
+#              NO_SYSTEM_ENVIRONMENT_PATH
+#              NO_CMAKE_SYSTEM_PATH)
+#    IF(NOT GTEST_HEADER)
+#       MESSAGE(FATAL_ERROR "gtest.h not found in ${MOCKCPP_XUNIT_HOME}/include/gtest, please specify MOCKCPP_XUNIT_HOME as the home path of googletest correctly.")
+#    ENDIF()
+#    INCLUDE_DIRECTORIES(BEFORE ${MOCKCPP_XUNIT_HOME}/include)
    SET(MOCKCPP_SRCS ${MOCKCPP_SRCS} ports/failure/gtest_report_failure.cpp)
 
 ELSEIF(${MOCKCPP_XUNIT} STREQUAL "CppUTest" OR ${MOCKCPP_XUNIT} STREQUAL "cpputest")
@@ -298,15 +304,12 @@ ENDFOREACH()
 ######################################################
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/testngpp/src)
 # 查找 Boost 库。如果你只安装了特定的 Boost 组件，确保在这里指定它们。
-find_package(Boost REQUIRED COMPONENTS type_traits)
+ set(CMAKE_TOOLCHAIN_FILE "/home/cl/git/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+find_package(boost_type_traits REQUIRED CONFIG)
 
 ADD_LIBRARY(mockcpp STATIC ${MOCKCPP_SRCS})
 
-# 包含 Boost 头文件
-target_include_directories(mockcpp PRIVATE ${Boost_INCLUDE_DIRS})
-
-# 链接 Boost 库
-target_link_libraries(mockcpp PRIVATE ${Boost_LIBRARIES})
+target_link_libraries(mockcpp PRIVATE Boost::type_traits)
 
 INCLUDE_DIRECTORIES(BEFORE ${MOCKCPP_SRC_ROOT}/include ${MOCKCPP_SRC_ROOT}/3rdparty)
 
@@ -314,75 +317,3 @@ ADD_CUSTOM_TARGET(vtbl_related_headers DEPENDS ${MOCKCPP_VTBL_RELATED_HEADERS})
 ADD_CUSTOM_TARGET(arg_related_headers DEPENDS ${MOCKCPP_ARG_RELATED_HEADER_FILES})
 
 ADD_DEPENDENCIES(mockcpp vtbl_related_headers arg_related_headers)
-
-INSTALL(
-   TARGETS mockcpp
-   EXPORT mockcppTargets
-   ARCHIVE DESTINATION lib)
-
-# # Add include directories
-# target_include_directories(mockcpp PUBLIC
-#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>   # for headers when building
-#     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>  # for client in install mode
-# )
-# # Install the library and its headers
-# install(TARGETS my_sample_lib
-#         EXPORT mockcppTargets
-#         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-#         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-#         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-
-# Install COPYING and LICENSE files to CMAKE_INSTALL_DATAROOTDIR
-install(FILES ${CMAKE_SOURCE_DIR}/COPYING ${CMAKE_SOURCE_DIR}/LICENSE
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
-
-IF(MSVC)
-INSTALL(
-   FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
-   DESTINATION lib)
-ENDIF(MSVC)
-
-# Create a version file
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
-    VERSION ${VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-
-
-# Export the targets for debug and release
-install(EXPORT mockcppTargets
-    FILE mockcppTargets.cmake
-    NAMESPACE mockcpp::
-    DESTINATION share/mockcpp
-)
-
-# Create and install the debug and release targets
-install(EXPORT mockcppTargets
-    FILE mockcppTargets-debug.cmake
-    NAMESPACE mockcpp::
-    CONFIGURATIONS Debug
-    DESTINATION share/mockcpp
-)
-
-install(EXPORT mockcppTargets
-    FILE mockcppTargets-release.cmake
-    NAMESPACE mockcpp::
-    CONFIGURATIONS Release
-    DESTINATION share/mockcpp
-)
-
-#Generate the config file in the current binary dir (this ensures it's not placed directly in source)
-file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
-    "include(CMakeFindDependencyMacro)\n"
-    "find_dependency(boost-type-traits CONFIG REQUIRED)\n"
-    "find_dependency(gtest CONFIG REQUIRED)\n"
-    "include(\"\${CMAKE_CURRENT_LIST_DIR}/mockcpp-targets.cmake\")\n"
-)
-
-# Install the config files
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/mockcppConfigVersion.cmake"
-    DESTINATION share/mockcpp
-)
