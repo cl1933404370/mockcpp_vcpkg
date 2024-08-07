@@ -176,26 +176,27 @@ SET(MOCKCPP_SRCS
 
 IF(${MOCKCPP_XUNIT} STREQUAL "GTEST" OR ${MOCKCPP_XUNIT} STREQUAL "gtest")
    find_package(GTest CONFIG REQUIRED)
-#     if(NOT GTest_INCLUDE_DIRS)
-#         get_target_property(GTEST_INCLUDE_DIRS GTest::gtest INTERFACE_INCLUDE_DIRECTORIES)
-#     endif()
-#     message("GTest_INCLUDE_DIRS: ${GTest_INCLUDE_DIRS}")
-#    set(MOCKCPP_XUNIT_HOME ${GTest_INCLUDE_DIRS}../../)
-#    IF(NOT DEFINED MOCKCPP_XUNIT_HOME)
-#       MESSAGE(FATAL_ERROR "Please specify MOCKCPP_XUNIT_HOME as the home path of googletest")
-#    ENDIF()
-#    FIND_FILE(GTEST_HEADER
-#              gtest.h
-#              PATHS ${MOCKCPP_XUNIT_HOME}/include/gtest
-#              NO_DEFAULT_PATH
-#              NO_CMAKE_ENVIRONMENT_PATH
-#              NO_CMAKE_PATH
-#              NO_SYSTEM_ENVIRONMENT_PATH
-#              NO_CMAKE_SYSTEM_PATH)
-#    IF(NOT GTEST_HEADER)
-#       MESSAGE(FATAL_ERROR "gtest.h not found in ${MOCKCPP_XUNIT_HOME}/include/gtest, please specify MOCKCPP_XUNIT_HOME as the home path of googletest correctly.")
-#    ENDIF()
-#    INCLUDE_DIRECTORIES(BEFORE ${MOCKCPP_XUNIT_HOME}/include)
+   get_target_property(GTest_INCLUDE_DIRS GTest::gtest INTERFACE_INCLUDE_DIRECTORIES)
+    if(NOT GTest_INCLUDE_DIRS)
+        get_target_property(GTEST_INCLUDE_DIRS GTest::gtest INTERFACE_INCLUDE_DIRECTORIES)
+    endif()
+    message("GTest_INCLUDE_DIRS: ${GTest_INCLUDE_DIRS}")
+   set(MOCKCPP_XUNIT_HOME ${GTest_INCLUDE_DIRS}../../)
+   IF(NOT DEFINED MOCKCPP_XUNIT_HOME)
+      MESSAGE(FATAL_ERROR "Please specify MOCKCPP_XUNIT_HOME as the home path of googletest")
+   ENDIF()
+   FIND_FILE(GTEST_HEADER
+             gtest.h
+             PATHS ${MOCKCPP_XUNIT_HOME}/include/gtest
+             NO_DEFAULT_PATH
+             NO_CMAKE_ENVIRONMENT_PATH
+             NO_CMAKE_PATH
+             NO_SYSTEM_ENVIRONMENT_PATH
+             NO_CMAKE_SYSTEM_PATH)
+   IF(NOT GTEST_HEADER)
+      MESSAGE(FATAL_ERROR "gtest.h not found in ${MOCKCPP_XUNIT_HOME}/include/gtest, please specify MOCKCPP_XUNIT_HOME as the home path of googletest correctly.")
+   ENDIF()
+   INCLUDE_DIRECTORIES(BEFORE ${MOCKCPP_XUNIT_HOME}/include)
    SET(MOCKCPP_SRCS ${MOCKCPP_SRCS} ports/failure/gtest_report_failure.cpp)
 
 ELSEIF(${MOCKCPP_XUNIT} STREQUAL "CppUTest" OR ${MOCKCPP_XUNIT} STREQUAL "cpputest")
