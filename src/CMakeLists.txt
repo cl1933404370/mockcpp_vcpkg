@@ -336,11 +336,11 @@ INSTALL(
 install(FILES ${CMAKE_SOURCE_DIR}/COPYING ${CMAKE_SOURCE_DIR}/LICENSE
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR})
 
-IF(MSVC)
-INSTALL(
-   FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
-   DESTINATION lib)
-ENDIF(MSVC)
+# IF(MSVC)
+# INSTALL(
+#    FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
+#    DESTINATION lib)
+# ENDIF(MSVC)
 
 # Create a version file
 write_basic_package_version_file(
