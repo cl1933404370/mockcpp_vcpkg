@@ -32,4 +32,4 @@
 *.app
 
 #wsl
-*.Identifier
+*:Zone.Identifier
