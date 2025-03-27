@@ -35,6 +35,7 @@
 # Ignore folders
 build/
 .vscode/
+__pycache__/
 
 #wsl
 *:Zone.Identifier
