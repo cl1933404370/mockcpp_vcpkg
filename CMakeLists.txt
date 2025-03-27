@@ -56,11 +56,11 @@ install(TARGETS mockcpp
 install(FILES ${CMAKE_SOURCE_DIR}/COPYING ${CMAKE_SOURCE_DIR}/LICENSE
         DESTINATION share/mockcpp)
 
-IF(MSVC)
-INSTALL(
-   FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
-   DESTINATION lib)
-ENDIF(MSVC)
+# IF(MSVC)
+# INSTALL(
+#    FILES ${CMAKE_BINARY_DIR}/src/Debug/mockcpp.pdb
+#    DESTINATION lib)
+# ENDIF(MSVC)
 
 
 
