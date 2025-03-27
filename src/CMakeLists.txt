@@ -305,7 +305,7 @@ ENDFOREACH()
 ######################################################
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/testngpp/src)
 # 查找 Boost 库。如果你只安装了特定的 Boost 组件，确保在这里指定它们。
- set(CMAKE_TOOLCHAIN_FILE "/home/cl/git/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+ #set(CMAKE_TOOLCHAIN_FILE "/home/cl/git/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 find_package(boost_type_traits REQUIRED CONFIG)
 
 ADD_LIBRARY(mockcpp STATIC ${MOCKCPP_SRCS})
