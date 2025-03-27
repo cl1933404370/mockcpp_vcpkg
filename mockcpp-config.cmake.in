@@ -1,0 +1,44 @@
+@PACKAGE_INIT@
+
+# Package information
+set(PROJECT_NAME @PACKAGE_NAME@)
+set(PROJECT_VERSION @VERSION@)
+set(PROJECT_BUGREPORT @PACKAGE_BUGREPORT@)
+set(PROJECT_URL @PACKAGE_URL@)
+set(MOCKCPP_LIBRARIES mockcpp::mockcpp)
+#set(PACKAGE_NAME "@PACKAGE_NAME@")
+#set(PACKAGE_VERSION "@PACKAGE_VERSION@")
+#set(PACKAGE_INSTALL_PREFIX "@PACKAGE_INSTALL_PREFIX@")
+
+
+include(CMakeFindDependencyMacro)
+
+set_and_check(mockcpp_INCLUDE_DIRS "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(mockcpp_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
+set_and_check(mockcpp_CMAKE_DIR "@PACKAGE_CMAKE_INSTALL_DIR@")
+
+# # find_dependency() ends up changing PACKAGE_PREFIX_DIR, so save
+# # folly's prefix directory in the FOLLY_PREFIX_DIR variable
+set(mockcpp_PREFIX_DIR "${PACKAGE_PREFIX_DIR}")
+
+# # Include the folly-targets.cmake file, which is generated from our CMake rules
+if (NOT TARGET mockcpp::mockcpp)
+  include("${CMAKE_CURRENT_LIST_DIR}/mockcpp-targets.cmake")
+endif()
+
+# # Set FOLLY_LIBRARIES from our Folly::folly target
+set(FOLLY_LIBRARIES mockcpp::mockcpp)
+
+
+check_required_components(@PROJECT_NAME@)
+
+# # Find MOCKCPP's dependencies
+find_dependency(GTest)
+
+# # #set(Boost_USE_STATIC_LIBS "@MOCKCPP_BOOST_LINK_STATIC@")
+find_dependency(Boost MODULE
+  COMPONENTS
+    type_traits
+  REQUIRED
+)
+# Include the MOCKCPP-targets.cmake file, which is generated from our CMake rules
