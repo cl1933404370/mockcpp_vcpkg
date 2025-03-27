@@ -35,3 +35,6 @@
 # Ignore folders
 build/
 .vscode/
+
+#wsl
+*:Zone.Identifier
