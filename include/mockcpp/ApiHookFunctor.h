@@ -63,9 +63,9 @@ private: \
    static unsigned int refCount; \
 }; \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
-void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::apiAddress = 0; \
+inline void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::apiAddress = 0; \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
-unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::refCount = 0 
+inline unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::refCount = 0
 
 #if defined(_MSC_VER)
 #define MOCKCPP_API_HOOK_FUNCTOR_DEF(n) \
