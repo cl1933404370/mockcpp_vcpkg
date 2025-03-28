@@ -67,13 +67,15 @@ inline void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::apiAddress
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
 inline unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq>::refCount = 0
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_M_X64)
+// When not x64, provide both variants:
 #define MOCKCPP_API_HOOK_FUNCTOR_DEF(n) \
-__MOCKCPP_API_HOOK_FUNCTOR_DEF(n, ); \
-__MOCKCPP_API_HOOK_FUNCTOR_DEF(n, __stdcall) 
+  __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, );  \
+  __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, __stdcall)
 #else
+// On x64 or non-MSC environments, only use one variant.
 #define MOCKCPP_API_HOOK_FUNCTOR_DEF(n) \
-__MOCKCPP_API_HOOK_FUNCTOR_DEF(n, )
+  __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, )
 #endif
 
 MOCKCPP_API_HOOK_FUNCTOR_DEF(0);
