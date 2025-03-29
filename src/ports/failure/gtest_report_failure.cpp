@@ -21,7 +21,7 @@
 
 MOCKCPP_NS_START
 
-inline void
+void
 reportFailure(unsigned srcline, const char *srcfile,
               const std::string &message)
 {
