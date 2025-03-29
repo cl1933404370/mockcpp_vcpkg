@@ -24,7 +24,7 @@
 
 MOCKCPP_NS_START
 
-extern void
+void 
 reportFailure(unsigned int line, const char *file, const std::string &message);
 
 #define MOCKCPP_REPORT_FAILURE(msg) \
