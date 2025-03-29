@@ -21,9 +21,9 @@
 
 MOCKCPP_NS_START
 
-void
-reportFailure(unsigned srcline, const char* srcfile,
-             const std::string& message)
+inline void
+reportFailure(unsigned srcline, const char *srcfile,
+              const std::string &message)
 {
     using namespace testing;
     using namespace testing::internal;
