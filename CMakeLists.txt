@@ -20,7 +20,10 @@ include(CMakePackageConfigHelpers)
 # Enable C++ language
 enable_language(CXX)
 INCLUDE(ProjectVar.txt)
+IF(MSVC)
+ELSE(MSVC)
 SET(MOCKCPP_XUNIT "gtest" CACHE STRING "Set to gtest/cpputest/cppunit to use other testframeworks.")
+ENDIF(MSVC)
 set(INCLUDE_INSTALL_DIR include CACHE STRING
     "The subdirectory where header files should be installed")
 set(LIB_INSTALL_DIR lib CACHE STRING
